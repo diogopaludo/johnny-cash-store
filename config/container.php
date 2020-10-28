@@ -1,6 +1,7 @@
 <?php
 
 use Psr\Container\ContainerInterface;
+use Selective\BasePath\BasePathMiddleware;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Middleware\ErrorMiddleware;
@@ -29,4 +30,7 @@ return [
         );
     },
 
+    BasePathMiddleware::class => function (ContainerInterface $container) {
+        return new BasePathMiddleware($container->get(App::class));
+    },
 ];
