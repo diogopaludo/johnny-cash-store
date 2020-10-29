@@ -36,7 +36,7 @@ final class EmployeeData
      *
      * @return void
      */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
@@ -54,11 +54,11 @@ final class EmployeeData
     /**
      * setter for Employee name
      *
-     * @param int $name
+     * @param string $name
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }

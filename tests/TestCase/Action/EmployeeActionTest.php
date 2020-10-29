@@ -75,4 +75,65 @@ class EmployeeActionTest extends TestCase
         $response = $this->app->handle($request);
         $this->assertSame(422, $response->getStatusCode());
     }
+    
+    /**
+     * Test.
+     *
+     * @dataProvider provideEmployeeActionUnpaidBills
+     *
+     * @param EmployeeData $employee The Employee
+     * @param array $expected The expected result
+     *
+     * @return void
+     */
+    public function testEmployeeActionUnpaidBills(array $bills, array $expected): void
+    {
+        // Mock the repository resultset
+        $this->mock(EmployeeRepository::class)->method('getUnpaidBills')->willReturn($bills);
+        
+        // Create request with method and url
+        $request = $this->createRequest('GET', '/employee/4/unpaid');
+
+        // Make request and fetch response
+        $response = $this->app->handle($request);
+        // Asserts
+        $this->assertSame(201, $response->getStatusCode());
+        $this->assertJsonData($response, $expected);
+    }
+
+    /**
+     * Provider.
+     *
+     * @return array The data
+     */
+    public function provideEmployeeActionUnpaidBills(): array
+    {
+        return [
+            'Employee' =>
+            [
+                [
+                    [
+                        "id" => "216",
+                        "time_created" => "2019-09-12 10:30:00",
+                        "employeeId" => "4",
+                        "skuId" => "30",
+                        "quantity" => "1",
+                        "totalPrice" => "125",
+                        "paidInBox" => null
+                    ]
+                ],
+                [
+                    [
+                        "id" => "216",
+                        "time_created" => "2019-09-12 10:30:00",
+                        "employeeId" => "4",
+                        "skuId" => "30",
+                        "quantity" => "1",
+                        "totalPrice" => "125",
+                        "paidInBox" => null
+                    ]
+                ]
+            ]
+        ];
+    }
 }

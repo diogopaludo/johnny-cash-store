@@ -47,4 +47,36 @@ class EmployeeRepository
 
         return $employee;
     }
+    
+    /**
+     * Get employee row.
+     *
+     * @param int $id The ID requested
+     *
+     * @return array The order information
+     */
+    public function getUnpaidBills(int $id): array
+    {
+        $sql =
+        "	SELECT OrderLog.*
+			FROM `johnnyorderlog` AS OrderLog 
+			LEFT JOIN `johnnypaymentlog` AS PaymentLog ON PaymentLog.id = OrderLog.paidInBox 
+			WHERE 
+				OrderLog.employeeId = '$id'
+				AND ( 
+					OrderLog.paidInBox IS NULL OR ( 
+						OrderLog.paidInBox IS NOT NULL 
+						AND PaymentLog.amount != OrderLog.totalPrice
+					)
+				)
+		";
+        
+        $stm = $this->connection->prepare($sql);
+        $stm->execute();
+        $result = [];
+        while ($res = $stm->fetchObject()) {
+            $result[] = (array)$res;
+        }
+        return $result;
+    }
 }

@@ -25,11 +25,20 @@ final class EmployeeAction
         
         $id = $route->getArgument('id');
         if ($id > 0 and filter_var($id, FILTER_VALIDATE_INT)) {
-            $result = $this->employee->getEmployee($id);
-            $response->getBody()->write((string)json_encode($result));
-            return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(201);
+            $method = $route->getArgument('method');
+            if ($method === 'unpaid') {
+                $result = $this->employee->getUnpaidBills($id);
+                $response->getBody()->write((string)json_encode($result));
+                return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(201);
+            } else {
+                $result = $this->employee->getEmployee($id);
+                $response->getBody()->write((string)json_encode($result));
+                return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(201);
+            }
         } else {
             $response->getBody()->write((string)json_encode([]));
             return $response

@@ -38,4 +38,16 @@ final class Employee
     {
         return $this->repository->getEmployee($id);
     }
+    
+    /**
+     * get the information of an employee.
+     *
+     * @param int $id The ID requested
+     *
+     * @return array The data acquired
+     */
+    public function getUnpaidBills(int $id): array
+    {
+        return $this->repository->getUnpaidBills($id);
+    }
 }
