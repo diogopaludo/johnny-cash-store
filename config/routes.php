@@ -5,12 +5,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 
 return function (App $app) {
-    $app->get('/', function (
-        ServerRequestInterface $request,
-        ResponseInterface $response
-    ) {
-        $response->getBody()->write('It works!');
-
-        return $response;
-    });
+    $app->get('/employee/{id:[0-9]+}', \App\Action\EmployeeGetAction::class);
+    //$app->post('/employee', \App\Action\EmployeeCreateAction::class);
 };
