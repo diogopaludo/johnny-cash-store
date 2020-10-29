@@ -3,6 +3,7 @@
 namespace App\Domain\Sku\Repository;
 
 use PDO;
+use App\Domain\Sku\Data\SkuData;
 
 /**
  * Repository.
@@ -25,20 +26,26 @@ class SkuRepository
     }
 
     /**
-     * get SKU row.
+     * get SKU row. For simplicity an array can be returned, but an instance of SkuData is being used as a return
      *
      * @param int $id The SKU ID
      *
-     * @return array The SKU information
+     * @return SkuData The SKU information
      */
-    public function getSku(int $id): array
+    public function getSku(int $id): SkuData
     {
         $sql = "SELECT `id`, `name`, `price` FROM `johnnysku` WHERE id = '$id'";
         
         $stm = $this->connection->prepare($sql);
         $stm->execute();
+        $result = (array)$stm->fetchObject();
 
-        return (array)$stm->fetchObject();
+        $sku = new SkuData;
+        $sku->setId($result['id']);
+        $sku->setName($result['name']);
+        $sku->setPrice($result['price']);
+
+        return $sku;
     }
     
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Sku\Service;
 
+use App\Domain\Sku\Data\SkuData;
 use App\Domain\Sku\Repository\SkuRepository;
 use Selective\Validation\Exception\ValidationException;
 use Selective\Validation\ValidationResult;
@@ -31,14 +32,11 @@ final class Sku
      *
      * @param int $id The ID requested
      *
-     * @return array The data acquired
+     * @return SkuData The data acquired
      */
-    public function getSku(int $id): array
+    public function getSku(int $id): SkuData
     {
-        $this->validateId($id);
-
-        $data = $this->repository->getSku($id);
-        return $data;
+        return $this->repository->getSku($id);
     }
     
     /**
@@ -52,26 +50,6 @@ final class Sku
 
         $data = $this->repository->getTopSelling($initialDate, $finalDate);
         return $data;
-    }
-    
-    /**
-     * ID validation.
-     *
-     * @param int $id The id parameter
-     *
-     * @throws ValidationException
-     *
-     * @return void
-     */
-    private function validateId(int $id): void
-    {
-        $errors = [];
-        if (empty($id)) {
-            $errors['id'] = 'ID required';
-        }
-        if ($errors) {
-            throw new ValidationException('Please check your input', $errors);
-        }
     }
     
     /**

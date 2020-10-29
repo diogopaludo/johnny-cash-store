@@ -3,11 +3,12 @@
 namespace App\Domain\Employee\Repository;
 
 use PDO;
+use App\Domain\Employee\Data\EmployeeData;
 
 /**
  * Repository.
  */
-class EmployeeGetterRepository
+class EmployeeRepository
 {
     /**
      * @var PDO The database connection
@@ -25,19 +26,25 @@ class EmployeeGetterRepository
     }
 
     /**
-     * Insert employee row.
+     * Get employee row.
      *
      * @param int $id The employee ID
      *
-     * @return array The employee information
+     * @return EmployeeData The employee information
      */
-    public function getEmployee(int $id): array
+    public function getEmployee(int $id): EmployeeData
     {
         $sql = "SELECT `id`, `name` FROM `johnnyemployee` WHERE id = '$id'";
         
         $stm = $this->connection->prepare($sql);
         $stm->execute();
 
-        return (array)$stm->fetchObject();
+        $result = (array)$stm->fetchObject();
+
+        $employee = new EmployeeData;
+        $employee->setId($result['id']);
+        $employee->setName($result['name']);
+
+        return $employee;
     }
 }

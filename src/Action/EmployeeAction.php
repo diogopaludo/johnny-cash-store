@@ -2,18 +2,18 @@
 
 namespace App\Action;
 
-use App\Domain\Sku\Service\Sku;
+use App\Domain\Employee\Service\Employee;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Routing\RouteContext;
 
-final class SkuAction
+final class EmployeeAction
 {
-    private $sku;
+    private $employee;
 
-    public function __construct(Sku $sku)
+    public function __construct(Employee $employee)
     {
-        $this->sku = $sku;
+        $this->employee = $employee;
     }
 
     public function __invoke(
@@ -24,17 +24,8 @@ final class SkuAction
         $route = $routeContext->getRoute();
         
         $id = $route->getArgument('id');
-        $method = $route->getArgument('method');
         if ($id > 0 and filter_var($id, FILTER_VALIDATE_INT)) {
-            $result = $this->sku->getSku($id);
-            $response->getBody()->write((string)json_encode($result));
-            return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(201);
-        } elseif ($method === 'top-selling') {
-            $initialDate = $route->getArgument('one');
-            $finalDate = $route->getArgument('two');
-            $result = $this->sku->getTopSelling($initialDate, $finalDate);
+            $result = $this->employee->getEmployee($id);
             $response->getBody()->write((string)json_encode($result));
             return $response
             ->withHeader('Content-Type', 'application/json')
