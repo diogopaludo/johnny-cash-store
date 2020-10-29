@@ -21,6 +21,16 @@ return [
         return AppFactory::create();
     },
 
+    ValidationExceptionMiddleware::class => function (ContainerInterface $container) {
+        $factory = $container->get(ResponseFactoryInterface::class);
+
+        return new ValidationExceptionMiddleware(
+            $factory,
+            new ErrorDetailsResultTransformer(),
+            new JsonEncoder()
+        );
+    },
+    
     ErrorMiddleware::class => function (ContainerInterface $container) {
         $app = $container->get(App::class);
         $settings = $container->get('settings')['error'];
@@ -31,16 +41,6 @@ return [
             (bool)$settings['display_error_details'],
             (bool)$settings['log_errors'],
             (bool)$settings['log_error_details']
-        );
-    },
-    
-    ValidationExceptionMiddleware::class => function (ContainerInterface $container) {
-        $factory = $container->get(ResponseFactoryInterface::class);
-
-        return new ValidationExceptionMiddleware(
-            $factory,
-            new ErrorDetailsResultTransformer(),
-            new JsonEncoder()
         );
     },
 
