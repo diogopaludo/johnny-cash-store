@@ -3,7 +3,8 @@
 namespace App\Domain\Employee\Service;
 
 use App\Domain\Employee\Repository\EmployeeGetterRepository;
-use App\Exception\ValidationException;
+use Selective\Validation\Exception\ValidationException;
+use Selective\Validation\ValidationResult;
 
 /**
  * Service.
@@ -51,12 +52,12 @@ final class EmployeeGetter
      */
     private function validateId(int $id): void
     {
-        $errors = [];
+        $validationResult = new ValidationResult();
         if (empty($id)) {
-            $errors['id'] = 'Input required';
+            $validationResult->addError('id', 'ID invalid');
         }
-        if ($errors) {
-            throw new ValidationException('Please check your input', $errors);
+        if ($validationResult->fails()) {
+            throw new ValidationException('Please check your input', $validationResult);
         }
     }
 }

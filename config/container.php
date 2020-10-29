@@ -1,7 +1,11 @@
 <?php
 
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Selective\BasePath\BasePathMiddleware;
+use Selective\Validation\Encoder\JsonEncoder;
+use Selective\Validation\Middleware\ValidationExceptionMiddleware;
+use Selective\Validation\Transformer\ErrorDetailsResultTransformer;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Middleware\ErrorMiddleware;
@@ -29,6 +33,16 @@ return [
             (bool)$settings['log_error_details']
         );
     },
+    
+    ValidationExceptionMiddleware::class => function (ContainerInterface $container) {
+        $factory = $container->get(ResponseFactoryInterface::class);
+
+        return new ValidationExceptionMiddleware(
+            $factory,
+            new ErrorDetailsResultTransformer(),
+            new JsonEncoder()
+        );
+    },
 
     BasePathMiddleware::class => function (ContainerInterface $container) {
         return new BasePathMiddleware($container->get(App::class));
@@ -46,5 +60,9 @@ return [
         $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
     
         return new PDO($dsn, $username, $password, $flags);
+    },
+    
+    ResponseFactoryInterface::class => function (ContainerInterface $container) {
+        return $container->get(App::class)->getResponseFactory();
     },
 ];
