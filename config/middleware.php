@@ -3,6 +3,7 @@
 use Selective\BasePath\BasePathMiddleware;
 use Selective\Validation\Middleware\ValidationExceptionMiddleware;
 use Slim\App;
+use Slim\Middleware\ErrorMiddleware;
 
 return function (App $app) {
     // Parse json, form data and xml
@@ -14,5 +15,6 @@ return function (App $app) {
     $app->add(BasePathMiddleware::class);
     
     // Catch exceptions and errors
+    $app->add(ErrorMiddleware::class);
     $app->add(ValidationExceptionMiddleware::class);
 };
