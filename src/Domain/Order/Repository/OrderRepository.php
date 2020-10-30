@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Domain\Employee\Repository;
+namespace App\Domain\Order\Repository;
 
 use PDO;
-use App\Domain\Employee\Data\EmployeeData;
+use App\Domain\Order\Data\OrderData;
 
 /**
  * Repository.
  */
-class EmployeeRepository
+class OrderRepository
 {
     /**
      * @var PDO The database connection
@@ -26,47 +26,60 @@ class EmployeeRepository
     }
 
     /**
-     * Get employee row.
+     * Get order row.
      *
-     * @param int $id The employee ID
+     * @param int $id The order ID
      *
-     * @return EmployeeData The employee information
+     * @return OrderData The order information
      */
-    public function getEmployee(int $id): EmployeeData
+    public function getOrder(int $id): OrderData
     {
-        $sql = "SELECT `id`, `name` FROM `johnnyemployee` WHERE id = '$id'";
+        $sql =
+        "	SELECT 
+				`id`, 
+				`time_created`, 
+				`employeeId`, 
+				`skuId`, 
+				`quantity`, 
+				`totalPrice`, 
+				`paidInBox` 
+			FROM `johnnyorderlog` 
+			WHERE `id` = '$id'
+		";
         
         $stm = $this->connection->prepare($sql);
         $stm->execute();
 
-        $employee = new EmployeeData();
+        $order = new OrderData;
         if ($result = $stm->fetchObject()) {
-            $employee->setId($result->id);
-            $employee->setName($result->name);
+            $order->setId($result->id);
+            $order->setTimeCreated($result->time_created);
+            $order->setEmployeeId($result->employeeId);
+            $order->setSkuId($result->skuId);
+            $order->setQuantity($result->quantity);
+            $order->setTotalPrice($result->totalPrice);
+            $order->setPaidInBox($result->paidInBox);
         }
-        return $employee;
+        return $order;
     }
     
     /**
-     * Get employee row.
+     * Get order row.
      *
      * @param int $id The ID requested
      *
      * @return array The order information
      */
-    public function getUnpaidBills(int $id): array
+    public function getUnpaidBills(): array
     {
         $sql =
         "	SELECT OrderLog.*
 			FROM `johnnyorderlog` AS OrderLog 
 			LEFT JOIN `johnnypaymentlog` AS PaymentLog ON PaymentLog.id = OrderLog.paidInBox 
 			WHERE 
-				OrderLog.employeeId = '$id'
-				AND ( 
-					OrderLog.paidInBox IS NULL OR ( 
-						OrderLog.paidInBox IS NOT NULL 
-						AND PaymentLog.amount != OrderLog.totalPrice
-					)
+				OrderLog.paidInBox IS NULL OR ( 
+					OrderLog.paidInBox IS NOT NULL 
+					AND PaymentLog.amount != OrderLog.totalPrice
 				)
 			ORDER BY OrderLog.time_created
 		";

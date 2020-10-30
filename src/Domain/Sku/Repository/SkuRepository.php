@@ -38,13 +38,12 @@ class SkuRepository
         
         $stm = $this->connection->prepare($sql);
         $stm->execute();
-        $result = (array)$stm->fetchObject();
-
-        $sku = new SkuData;
-        $sku->setId($result['id']);
-        $sku->setName($result['name']);
-        $sku->setPrice($result['price']);
-
+        $sku = new SkuData();
+        if ($result = $stm->fetchObject()) {
+            $sku->setId($result->id);
+            $sku->setName($result->name);
+            $sku->setPrice($result->price);
+        }
         return $sku;
     }
     
